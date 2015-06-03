@@ -12,7 +12,7 @@ before_install:
 os:
   - osx
   - linux
-script: npm run-script test-all:cover
+script: npm run test:cover
 install:
   - test $TRAVIS_OS_NAME = "osx" && brew install nvm && source $(brew --prefix nvm)/nvm.sh || test $TRAVIS_OS_NAME = "linux"
   - nvm install $NODE_VERSION
