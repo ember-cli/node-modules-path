@@ -39,4 +39,8 @@ describe('cli/node-module-path.js', function() {
     expect(nodeModulesPath(process.cwd())).to.equal(path.resolve('../../tmp','node_modules'));
     expect(nodeModulesPath('../../tmp/node_modules/my-add-on')).to.equal(path.resolve('../../tmp','node_modules','my-add-on','node_modules'));
   });
+
+  it('should resolve node_modules if the directory is behind the context', function() {
+    expect(nodeModulesPath(path.resolve(process.cwd(), 'fixtures/foo/bar/baz'))).to.equal(path.resolve(process.cwd(), 'fixtures/foo/node_modules'));
+  });
 });
