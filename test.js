@@ -43,4 +43,11 @@ describe('cli/node-module-path.js', function() {
   it('should resolve node_modules if the directory is behind the context', function() {
     expect(nodeModulesPath(path.resolve(process.cwd(), 'fixtures/foo/bar/baz'))).to.equal(path.resolve(process.cwd(), 'fixtures/foo/node_modules'));
   });
+
+  describe('with an .npmrc', function() {
+    it('finds the specified node_modules path', function() {
+      expect(nodeModulesPath(path.resolve(process.cwd(), 'fixtures/foo-with-npmrc')))
+        .to.equal(path.resolve(process.cwd(), 'fixtures/foo-with-npmrc/some/other/node_modules'));
+    });
+  });
 });
