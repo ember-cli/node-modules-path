@@ -2,7 +2,8 @@ sudo: false
 env:
   - NODE_VERSION=0.10
   - NODE_VERSION=0.12
-  - NODE_VERSION=iojs
+  - NODE_VERSION=4
+  - NODE_VERSION=5
 
 before_install:
   - "npm config set spin false"
