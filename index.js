@@ -1,7 +1,8 @@
 'use strict';
 
-var path  = require('path');
-var fs  = require('fs');
+var path = require('path');
+var ini  = require('ini');
+var fs   = require('fs');
 
 // Due to the fact that the node community doesn't feel that
 // the node_modules resolution algorithm should be public method
@@ -29,6 +30,25 @@ function nodeModulePaths(from) {
 
   return paths;
 }
+
+// Once we have a list of all potential node_modules paths,
+// we will want to check those to see if there's a specified
+// .npmrc. If so, return that path.
+function npmrcPath(allNodeModulePaths) {
+  for (var i = 0; i < allNodeModulePaths.length; i++) {
+    var currPath = allNodeModulePaths[i].replace(/node_modules$/, '');
+    var possibleNpmrcFile = path.join(currPath, '.npmrc')
+
+    try {
+      if (fs.statSync(possibleNpmrcFile).isFile()) {
+        var npmrc = ini.parse(fs.readFileSync(possibleNpmrcFile, 'utf8'));
+        if (npmrc.prefix) {
+          return path.resolve(currPath, npmrc.prefix, 'node_modules');
+        }
+      }
+    } catch (e) {}
+  }
+};
 
 function isSubdirectoryOf(parentPath, possibleChildPath) {
   return possibleChildPath.length > parentPath.length &&
@@ -98,6 +118,11 @@ module.exports = function nodeModulesPath(context) {
     }
   } else {
     var paths = nodeModulePaths(contextPath);
+    var possibleNpmrcPath = npmrcPath(paths);
+
+    if (possibleNpmrcPath) {
+      return possibleNpmrcPath;
+    }
 
     for (var i = 0, l = paths.length; i < l; i++) {
       var nodeModulePathUnderTest = paths[i];
